@@ -1,0 +1,93 @@
+services:  
+  redis:
+    image: redis:alpine
+    container_name: django-redis
+    env_file:
+      - .env
+    ports:
+      - ${REDIS_PORT}
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - redis_network
+
+  psql:
+    image: postgres:alpine
+    container_name: django-psql
+    env_file:
+      - .env
+    volumes:
+      # init settings, executed only on deploy
+      # - db_data:/docker-entrypoint-initdb.d
+      # database data
+      - db_data:/var/lib/postgresql/data
+    networks:
+     - psql_network
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    # build: 
+    #   context: ./nginx
+    # image: nginx:latest
+    image: nginx:stable-alpine
+    container_name: nginx-chatapp
+    volumes: 
+      - ./nginx/config:/etc/nginx/conf.d     
+      - static_data:/var/www/html/websocket/static_data  
+    env_file:
+      - .env
+    networks:
+      - redis_network
+      - nginx_network      
+    ports:
+      - ${NGINX_PORT}
+    depends_on:
+      - django
+    
+  django:
+    build: 
+      context: ./app
+    image: django-chatapp-image
+    container_name: django-chatapp
+    command: daphne -p $DJANGO_PORT_EXPOSE -b 0.0.0.0 websocket.asgi:application
+    restart: "on-failure"
+    volumes:
+      - ./app/websocket:/websocket  
+      - static_data:/websocket/websocket/static    
+    env_file:
+      - .env
+    ports:
+      - ${DJANGO_PORT}          
+    networks:
+      - redis_network
+      - psql_network
+      - nginx_network
+    depends_on:
+      redis:
+        condition: service_healthy
+      psql:
+        condition: service_healthy
+
+networks:
+  redis_network:
+    driver: bridge
+  psql_network:
+    driver: bridge
+  nginx_network:
+    driver: bridge
+
+volumes:
+  db_data:
+  redisdata:
+  static_data:
