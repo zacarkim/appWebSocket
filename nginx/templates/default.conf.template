@@ -2,7 +2,7 @@
 upstream hello_server {
     # docker will automatically resolve this to the correct address
     # because we use the same name as the service:
-    server ${DJANGO_DOCKER_SERVICE_NAME}:${DJANGO_PORT_EXPOSE};
+    server ${DJANGO_HOST}:${DJANGO_PORT_EXPOSE};
 }
 
 
