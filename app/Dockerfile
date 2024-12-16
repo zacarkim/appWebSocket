@@ -22,5 +22,4 @@ RUN pip install -r requirements.txt
 RUN chmod +x docker-entrypoint.sh
 
 ENTRYPOINT ["sh", "/websocket/docker-entrypoint.sh"]
-
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
