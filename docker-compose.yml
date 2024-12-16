@@ -39,12 +39,12 @@ services:
   nginx:
     # build: 
     #   context: ./nginx
-    # image: nginx:latest
-    image: nginx:stable-alpine
+    # image: nginx  
+    image: nginx:stable-alpine  
     container_name: nginx-chatapp
-    volumes: 
-      - ./nginx/config:/etc/nginx/conf.d     
-      - static_data:/var/www/html/websocket/static_data  
+    volumes:   
+      - ./nginx/templates:/etc/nginx/templates  
+      - static_data:/var/www/websocket/static_data  
     env_file:
       - .env
     networks:

@@ -2,19 +2,19 @@
 upstream hello_server {
     # docker will automatically resolve this to the correct address
     # because we use the same name as the service:
-    server django:9542;
+    server ${DJANGO_DOCKER_SERVICE_NAME}:${DJANGO_PORT_EXPOSE};
 }
 
 
 server {
-  listen 80;
-  server_name bustop.ddns.net 200.129.242.26;
+  listen ${NGINX_PORT_EXPOSE};
+  server_name ${NGINX_DOMAIN};
   charset utf-8;
   client_max_body_size 20M;
 
   location /static/ {
     autoindex off;
-    alias /var/www/html/websocket/static_data/;
+    alias /var/www/websocket/static_data/;
   }
 
   # location /mediafiles/ {

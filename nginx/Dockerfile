@@ -1,4 +1,0 @@
-FROM nginx:stable-alpine
-RUN rm /etc/nginx/conf.d/default.conf
-COPY ./config/service.conf /etc/nginx/conf.d/default.conf
-# EXPOSE 80
