@@ -18,6 +18,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
+# if env.str('PIPELINE') == 'production':
+#         from .production import *
 
 
 # Quick-start development settings - unsuitable for production
@@ -83,7 +85,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [('redis', env.int('REDIS_PORT_EXPOSE', '6379'))],
+            "hosts": [(env.str("REDIS_HOST", "redis"), env.int('REDIS_PORT_EXPOSE', '6379'))],
         },
     },
 }
@@ -98,6 +100,7 @@ CHANNEL_LAYERS = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
 # POSTGRES - pip install psycopg2
 DATABASES = {
     "default": {
