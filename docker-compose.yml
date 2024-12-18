@@ -2,6 +2,7 @@ services:
   redis:
     image: redis:alpine
     container_name: django-redis
+    restart: always
     env_file:
       - .env
     ports:
@@ -20,6 +21,7 @@ services:
   psql:
     image: postgres:alpine
     container_name: django-psql
+    restart: always
     env_file:
       - .env
     volumes:
@@ -42,6 +44,7 @@ services:
     # image: nginx  
     image: nginx:stable-alpine  
     container_name: nginx-chatapp
+    restart: always
     volumes:   
       - ./nginx/templates:/etc/nginx/templates  
       - static_data:/var/www/websocket/static_data  
@@ -61,7 +64,7 @@ services:
     image: django-chatapp-image
     container_name: django-chatapp
     command: daphne -p $DJANGO_PORT_EXPOSE -b 0.0.0.0 websocket.asgi:application
-    restart: "on-failure"
+    restart: always
     volumes:
       - ./app/websocket:/websocket  
       - static_data:/websocket/static    
